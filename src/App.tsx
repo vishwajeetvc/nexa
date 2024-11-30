@@ -3,8 +3,13 @@ import { useRef, useState } from 'react';
 
 function App() {
   const [obj, setObj] = useState("");
+
+  let peerConnection = useRef(null);
+  let localStream = useRef(null);
+  let remoteStream = useRef(null);
   let offerVdo = useRef(null);
   let answerVdo = useRef(null);
+
   let servers = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
@@ -19,14 +24,11 @@ function App() {
       { urls: "stun:stun4.l.google.com:5349" },
     ]
   }
-  let peerConnection = useRef({});
-  let localStream = useRef({});
-  let remoteStream = useRef({});
 
   async function createOffer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     offerVdo.current.srcObject = localStream.current;
     offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
 
@@ -83,7 +85,7 @@ function App() {
 
     peerConnection.current.onicecandidate = function(e: any) {
       if (e.candidate) {
-        setObject(JSON.stringify(peerConnection.current.localDescription));
+        setObj(JSON.stringify(peerConnection.current.localDescription));
       }
     }
 
@@ -97,7 +99,7 @@ function App() {
   }
   async function addAnswer() {
     let answer = JSON.parse(obj);
-    if (!peerConnection.current.currentRemoteDescription) {
+    if (!peerConnection.current.remoteDescription) {
       await peerConnection.current.setRemoteDescription(answer);
     }
   }
@@ -116,6 +118,7 @@ function App() {
       <button onClick={addAnswer}>Add-Answer</button>
       <textarea value={obj} onChange={(e) => {
         setObj(e.target.value);
+        console.log(obj);
       }}></textarea>
     </>
   )
