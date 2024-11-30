@@ -65,7 +65,7 @@ function App() {
   async function createAnswer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     offerVdo.current.srcObject = localStream.current;
     offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
 
