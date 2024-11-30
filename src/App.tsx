@@ -106,6 +106,7 @@ function App() {
 
   return (
     <>
+      <h1 className='text-red-900 text-3xl'>Nexa! this project is using react+tailwind+electron</h1>
       <div className="sender">
         <video ref={offerVdo}></video>
         <button onClick={createOffer}>Offer</button>
