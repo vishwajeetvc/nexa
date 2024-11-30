@@ -1,4 +1,3 @@
-import './App.css'
 import { useRef, useState } from 'react';
 
 function App() {
@@ -107,17 +106,19 @@ function App() {
   return (
     <>
       <h1 className='text-red-900 text-3xl'>Nexa! this project is using react+tailwind+electron</h1>
-      <div className="sender">
-        <video ref={offerVdo}></video>
-        <button onClick={createOffer}>Offer</button>
-      </div>
+      <div className='flex'>
+        <div className="sender">
+          <video className='w-[400px] border' ref={offerVdo}></video>
+          <button onClick={createOffer}>Offer</button>
+        </div>
 
-      <div className="receiver">
-        <video ref={answerVdo} className="answer-video"></video>
-        <button onClick={createAnswer}>Answer</button>
+        <div className="receiver">
+          <video ref={answerVdo} className="w-[400px] border"></video>
+          <button onClick={createAnswer}>Answer</button>
+        </div>
+        <button onClick={addAnswer}>Add-Answer</button>
       </div>
-      <button onClick={addAnswer}>Add-Answer</button>
-      <textarea value={obj} onChange={(e) => {
+      <textarea className='border w-[400px]' value={obj} onChange={(e) => {
         setObj(e.target.value);
         console.log(obj);
       }}></textarea>
