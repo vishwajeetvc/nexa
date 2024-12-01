@@ -32,8 +32,8 @@ app.whenReady().then(() => {
 })
 function createWindow() {
   win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1100,
+    height: 600,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -47,11 +47,10 @@ function createWindow() {
   })
 
 
+  Menu.setApplicationMenu(null);
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
-    // win.loadFile('dist/index.html')
-    Menu.setApplicationMenu(null);
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 }
