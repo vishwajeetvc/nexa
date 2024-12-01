@@ -15,7 +15,8 @@ export default function Navigation() {
   return <>
     <div
       style={{
-        borderRight: "5px solid #FF2559"
+        borderRight: "5px solid #FF2559",
+        WebkitAppRegion: 'drag',
       }}
       className="w-[80px] bg-[#0B192C] ">
       <div className="h-[100vh] flex flex-col justify-between ">

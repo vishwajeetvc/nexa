@@ -34,6 +34,8 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1100,
     height: 600,
+    resizable: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
