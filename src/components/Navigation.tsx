@@ -1,4 +1,4 @@
-
+import { ipcRenderer } from "electron"
 import nexa from "../../public/logo.png"
 import setting from "../../public/setting.png"
 import videoCall from "../../public/videoCall.png"
@@ -6,9 +6,10 @@ import chat from "../../public/chat.png"
 import cross from "../../public/cross.png"
 import i from "../../public/i.png"
 
-function Icon({ icon, moreCss }: any) {
+function Icon({ icon, moreCss, onClick, style }: any) {
   return <>
-    <img className={`cursor-pointer ${moreCss}`} src={icon} />
+    <img style={{ WebkitAppRegion: 'no-drag' }} onClick={onClick} className={`cursor-pointer ${moreCss}`} src={icon} />
+
   </>
 }
 export default function Navigation() {
@@ -28,7 +29,9 @@ export default function Navigation() {
         </div>
         <div className=" flex-col flex items-center pb-5 gap-5 ">
           <Icon icon={i} moreCss="w-[30px]" />
-          <Icon icon={cross} moreCss="w-[22px]" />
+          <Icon onClick={() => {
+            ipcRenderer.send('close-window');
+          }} icon={cross} moreCss="w-[32px]" />
         </div>
       </div>
       <div>

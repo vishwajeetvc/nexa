@@ -1,38 +1,55 @@
-import { app as n, BrowserWindow as s, session as p, desktopCapturer as c, Menu as d } from "electron";
-import { fileURLToPath as R } from "node:url";
-import e from "node:path";
-const _ = e.dirname(R(import.meta.url));
-process.env.APP_ROOT = e.join(_, "..");
-const t = process.env.VITE_DEV_SERVER_URL, E = e.join(process.env.APP_ROOT, "dist-electron"), i = e.join(process.env.APP_ROOT, "dist");
-process.env.VITE_PUBLIC = t ? e.join(process.env.APP_ROOT, "public") : i;
-let o;
-n.on("window-all-closed", () => {
-  process.platform !== "darwin" && (n.quit(), o = null);
+import { app, BrowserWindow, session, desktopCapturer, ipcMain } from "electron";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+process.env.APP_ROOT = path.join(__dirname, "..");
+const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
+const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
+const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
+let win;
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+    win = null;
+  }
 });
-n.on("activate", () => {
-  s.getAllWindows().length === 0 && r();
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
 });
-n.whenReady().then(() => {
-  r();
+app.on("ready", () => {
+  createWindow();
 });
-function r() {
-  o = new s({
-    width: 1100,
-    height: 600,
-    resizable: !1,
-    frame: !1,
+function createWindow() {
+  win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    resizable: false,
+    frame: false,
     webPreferences: {
-      nodeIntegration: !0,
-      contextIsolation: !1
+      nodeIntegration: true,
+      contextIsolation: false
     }
-  }), p.defaultSession.setDisplayMediaRequestHandler((f, l) => {
-    c.getSources({ types: ["screen"] }).then((a) => {
-      l({ video: a[0], audio: "loopback" });
+  });
+  session.defaultSession.setDisplayMediaRequestHandler((_r, callback) => {
+    desktopCapturer.getSources({ types: ["screen"] }).then((sources) => {
+      callback({ video: sources[0], audio: "loopback" });
     });
-  }), d.setApplicationMenu(null), t ? o.loadURL(t) : o.loadFile(e.join(i, "index.html"));
+  });
+  if (VITE_DEV_SERVER_URL) {
+    win.loadURL(VITE_DEV_SERVER_URL);
+  } else {
+    win.loadFile(path.join(RENDERER_DIST, "index.html"));
+  }
+  ipcMain.on("close-window", () => {
+    if (win)
+      win.close();
+  });
 }
 export {
-  E as MAIN_DIST,
-  i as RENDERER_DIST,
-  t as VITE_DEV_SERVER_URL
+  MAIN_DIST,
+  RENDERER_DIST,
+  VITE_DEV_SERVER_URL
 };
