@@ -5,6 +5,7 @@ import videoCall from "../../public/videoCall.png"
 import chat from "../../public/chat.png"
 import cross from "../../public/cross.png"
 import i from "../../public/i.png"
+import { Link } from "react-router"
 
 function Icon({ icon, moreCss, onClick, style }: any) {
   return <>
@@ -22,9 +23,18 @@ export default function Navigation() {
       className="w-[80px] bg-[#0B192C] ">
       <div className="h-[100vh] flex flex-col justify-between ">
         <div className=" flex-col flex items-center pt-5 gap-5 ">
-          <Icon icon={nexa} moreCss="w-[50px]" />
+
+          <Link to="/">
+            <Icon icon={nexa} moreCss="w-[50px]" />
+          </Link>
+
           <Icon icon={setting} moreCss="w-[30px]" />
-          <Icon icon={videoCall} moreCss="w-[30px]" />
+
+          <Link to="videoCall">
+            <Icon icon={videoCall} onClick={() => {
+            }} moreCss="w-[30px]" />
+          </Link>
+
           <Icon icon={chat} moreCss="w-[25px]" />
         </div>
         <div className=" flex-col flex items-center pb-5 gap-5 ">

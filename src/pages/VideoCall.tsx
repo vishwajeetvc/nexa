@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-export default function Screen() {
+export default function VideoCall() {
   const [obj, setObj] = useState("");
 
   let peerConnection = useRef(null);
@@ -104,7 +104,7 @@ export default function Screen() {
   }
 
   return (
-    <>
+    <div>
       <h1 className='text-red-900 text-3xl'>Nexa! this project is using react+tailwind+electron</h1>
       <div className='flex'>
         <div className="sender">
@@ -122,7 +122,7 @@ export default function Screen() {
         setObj(e.target.value);
         console.log(obj);
       }}></textarea>
-    </>
+    </div>
   )
 }
 
