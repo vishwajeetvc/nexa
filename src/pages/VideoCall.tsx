@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import bigLogo from '../../public/bigLogo.png'
+import exa from '../../public/exa.png'
 
 const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   const [obj, setObj] = useState(""); // setting the textarea
@@ -25,7 +27,7 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   async function createOffer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
     offerVdo.current.srcObject = localStream.current;
     offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
 
@@ -136,24 +138,54 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   }, [])
 
   return (
-    <div className='flex-grow'>
+    <div className='flex-grow h-[100vh]'>
 
-      <div className={`${videoVisible && 'hidden'}`} >
+      <div className={`${videoVisible && 'hidden'}  h-[100vh] relative`} >
 
-        <div className='flex'>
-          <div className="sender">
-            <button onClick={createOffer}>Offer</button>
-          </div>
-
-          <div className="receiver">
-            <button onClick={createAnswer}>Answer</button>
-          </div>
-          <button onClick={addAnswer}>Add-Answer</button>
+        <div className="relative  h-[40vh] top-[40px]">
+          <img className="absolute top-[0%] left-[0%]" src={bigLogo} />
+          <img className="absolute left-[18%] top-[33%]" src={exa} />
+          <h1
+            className='text-6xl absolute font-bold text-red-500
+                       top-[31%] left-[32%]
+            '>Video Call</h1>
         </div>
-        <textarea className='border w-[400px]' value={obj} onChange={(e) => {
-          setObj(e.target.value);
-          // console.log(obj);
-        }}></textarea>
+        <div className=''>
+          <div className='flex  py-[20px] justify-evenly'>
+            <VideoCallButton onClick={createOffer} title={"Offer"} />
+            <VideoCallButton onClick={createAnswer} title={"Answer"} />
+            <VideoCallButton onClick={addAnswer} title={"Add Answer"} />
+          </div>
+
+          <div className='p-5 h-[200px] absolute w-full bottom-0 '>
+            <div className='flex hover:outline outline-red-600   bg-[#0B192C] rounded-xl p-2 h-[100%] overflow-hidden justify-center'>
+              <textarea
+                style={{
+                  resize: 'none',
+                }}
+                className=' snap-none p-2 w-full h-[100%] bg-[#0B192C] text-white border-none outline-none  '
+                value={obj}
+                onChange={(e) => {
+                  setObj(e.target.value);
+                }}></textarea>
+            </div>
+          </div>
+        </div>
+
+        {/* <div className='flex'> */}
+        {/*   <div className="sender"> */}
+        {/*     <button onClick={createOffer}>Offer</button> */}
+        {/*   </div> */}
+        {/**/}
+        {/*   <div className="receiver"> */}
+        {/*     <button onClick={createAnswer}>Answer</button> */}
+        {/*   </div> */}
+        {/*   <button onClick={addAnswer}>Add-Answer</button> */}
+        {/* </div> */}
+        {/* <textarea className='border w-[400px]' value={obj} onChange={(e) => { */}
+        {/*   setObj(e.target.value); */}
+        {/*   // console.log(obj); */}
+        {/* }}></textarea> */}
 
       </div >
 
@@ -180,3 +212,24 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   )
 }
 export default VideoCall;
+
+
+
+
+
+
+
+
+{/* <button onClick={createOffer}>Offer</button> */ }
+
+function VideoCallButton({ title, onClick }) {
+  return (<>
+    <button
+      onClick={onClick}
+      className={`text-3xl shadow-xl font-bold text-white bg-[#0B192C]
+                px-7 py-4 rounded-xl hover:outline outline-red-600`}
+    >{title}</button>
+  </>)
+}
+
+

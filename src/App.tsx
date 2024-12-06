@@ -19,9 +19,10 @@ export default function App() {
       </div>
 
       {page == 0 && <Home />}
-      {page == 1 && <h1>Hello page 3</h1>}
-      {page == 4 && <h1>Hello page 4</h1>}
-      {page == 5 && <h1>Hello page 5</h1>}
+      {page == 1 && <InDev />}
+      {page == 3 && <InDev />}
+      {page == 4 && <InDev />}
+      {page == 5 && <InDev />}
 
       {
         page == 2 &&
@@ -33,4 +34,11 @@ export default function App() {
       }
     </div>
   </>
+}
+
+
+function InDev() {
+  return <div className="flex justify-center items-center w-full">
+    <h1 className="text-white font-bold text-4xl">😜Comming Soon!!</h1>
+  </div>
 }
