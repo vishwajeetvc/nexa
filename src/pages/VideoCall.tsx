@@ -1,11 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-export default function VideoCall() {
+const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   const [obj, setObj] = useState("");
 
-  let peerConnection = useRef(null);
-  let localStream = useRef(null);
-  let remoteStream = useRef(null);
   let offerVdo = useRef(null);
   let answerVdo = useRef(null);
 
@@ -27,7 +24,7 @@ export default function VideoCall() {
   async function createOffer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
     offerVdo.current.srcObject = localStream.current;
     offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
 
@@ -103,6 +100,28 @@ export default function VideoCall() {
     }
   }
 
+  useEffect(() => {
+
+    if (peerConnection.current?.localDescription.type == "offer") {
+
+      offerVdo.current.srcObject = localStream.current;
+      offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
+
+      answerVdo.current.srcObject = remoteStream.current;
+      answerVdo.current.onloadedmetadata = () => answerVdo.current.play();
+
+    } else if (peerConnection.current?.localDescription.type == "answer") {
+
+      offerVdo.current.srcObject = remoteStream.current;
+      offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
+
+      answerVdo.current.srcObject = localStream.current;
+      answerVdo.current.onloadedmetadata = () => answerVdo.current.play();
+
+    }
+
+  }, [])
+
   return (
     <div>
       <h1 className='text-red-900 text-3xl'>Nexa! this project is using react+tailwind+electron</h1>
@@ -125,4 +144,4 @@ export default function VideoCall() {
     </div>
   )
 }
-
+export default VideoCall;
