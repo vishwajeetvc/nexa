@@ -13,7 +13,10 @@ export default function App() {
 
   return <>
     <div className="flex w-full bg-[#1D2137]">
-      <Navigation setPage={setPage} />
+
+      <div>
+        <Navigation setPage={setPage} />
+      </div>
 
       {page == 0 && <Home />}
       {page == 1 && <h1>Hello page 3</h1>}

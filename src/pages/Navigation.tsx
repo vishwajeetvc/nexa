@@ -16,7 +16,7 @@ export default function Navigation({ setPage }) {
   return <>
     <div
       style={{
-        borderRight: "5px solid #FF2559",
+        borderRight: "2px solid #FF2559",
         WebkitAppRegion: 'drag',
       }}
       className="w-[80px] bg-[#0B192C] ">

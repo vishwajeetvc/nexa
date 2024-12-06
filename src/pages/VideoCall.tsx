@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
-  const [obj, setObj] = useState("");
+  const [obj, setObj] = useState(""); // setting the textarea
+  const [videoVisible, setVideoVisible] = useState(false);
 
   let offerVdo = useRef(null);
   let answerVdo = useRef(null);
@@ -24,7 +25,7 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   async function createOffer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     offerVdo.current.srcObject = localStream.current;
     offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
 
@@ -40,6 +41,11 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
       event.streams[0].getTracks().forEach(function(track: any) {
         remoteStream.current.addTrack(track);
       })
+    }
+    peerConnection.current.onconnectionstatechange = function() {
+      if (peerConnection.current.iceConnectionState == 'connected') {
+        setVideoVisible(true);
+      }
     }
     peerConnection.current.onicecandidate = function(event: any) {
       if (event.candidate) {
@@ -59,6 +65,7 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
     //
   }
   async function createAnswer() {
+
     peerConnection.current = new RTCPeerConnection(servers);
 
     localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -77,6 +84,12 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
       event.streams[0].getTracks().forEach(function(track: any) {
         remoteStream.current.addTrack(track);
       })
+    }
+
+    peerConnection.current.onconnectionstatechange = function() {
+      if (peerConnection.current.iceConnectionState == 'connected') {
+        setVideoVisible(true);
+      }
     }
 
     peerConnection.current.onicecandidate = function(e: any) {
@@ -104,17 +117,17 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
 
     if (peerConnection.current?.localDescription.type == "offer") {
 
+      setVideoVisible(true);
       offerVdo.current.srcObject = localStream.current;
       offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
-
       answerVdo.current.srcObject = remoteStream.current;
       answerVdo.current.onloadedmetadata = () => answerVdo.current.play();
 
     } else if (peerConnection.current?.localDescription.type == "answer") {
 
+      setVideoVisible(true);
       offerVdo.current.srcObject = remoteStream.current;
       offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
-
       answerVdo.current.srcObject = localStream.current;
       answerVdo.current.onloadedmetadata = () => answerVdo.current.play();
 
@@ -123,24 +136,46 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
   }, [])
 
   return (
-    <div>
-      <h1 className='text-red-900 text-3xl'>Nexa! this project is using react+tailwind+electron</h1>
-      <div className='flex'>
-        <div className="sender">
-          <video className='w-[400px] border' ref={offerVdo}></video>
-          <button onClick={createOffer}>Offer</button>
-        </div>
+    <div className='flex-grow'>
 
-        <div className="receiver">
-          <video ref={answerVdo} className="w-[400px] border"></video>
-          <button onClick={createAnswer}>Answer</button>
+      <div className={`${videoVisible && 'hidden'}`} >
+
+        <div className='flex'>
+          <div className="sender">
+            <button onClick={createOffer}>Offer</button>
+          </div>
+
+          <div className="receiver">
+            <button onClick={createAnswer}>Answer</button>
+          </div>
+          <button onClick={addAnswer}>Add-Answer</button>
         </div>
-        <button onClick={addAnswer}>Add-Answer</button>
+        <textarea className='border w-[400px]' value={obj} onChange={(e) => {
+          setObj(e.target.value);
+          // console.log(obj);
+        }}></textarea>
+
+      </div >
+
+      <div
+        style={{
+          // border: '5px solid red',
+          width: '100%',
+          height: '100vh'
+        }}
+        className={`${!videoVisible && 'hidden'} relative w-full`}>
+
+        <video
+          ref={answerVdo}
+          className=" absolute w-full h-[100vh] z-0 "></video>
+
+        <video
+          ref={offerVdo}
+          className='w-[200px] bg-red-900 rounded-xl z-10 border-2 border-blue-700 absolute right-4 bottom-4' ></video>
+
+
       </div>
-      <textarea className='border w-[400px]' value={obj} onChange={(e) => {
-        setObj(e.target.value);
-        console.log(obj);
-      }}></textarea>
+
     </div>
   )
 }
