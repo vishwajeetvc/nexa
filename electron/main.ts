@@ -49,7 +49,7 @@ function createWindow() {
   // splashWindow.loadFile('splash.html');
   win = new BrowserWindow({
     width: 1200,
-    height: 800,
+    height: 650,
     resizable: false,
     frame: false,
     webPreferences: {
