@@ -7,8 +7,24 @@ export default function App() {
   const [page, setPage] = useState(0);
 
   const peerConnection = useRef(null);
-  let localStream = useRef(null);
-  let remoteStream = useRef(null);
+  const localStream = useRef(null);
+  const remoteStream = useRef(null);
+  const serverIp = useRef(null);
+
+  const servers = {
+    iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun.l.google.com:5349" },
+      { urls: "stun:stun1.l.google.com:3478" },
+      { urls: "stun:stun1.l.google.com:5349" },
+      { urls: "stun:stun2.l.google.com:19302" },
+      { urls: "stun:stun2.l.google.com:5349" },
+      { urls: "stun:stun3.l.google.com:3478" },
+      { urls: "stun:stun3.l.google.com:5349" },
+      { urls: "stun:stun4.l.google.com:19302" },
+      { urls: "stun:stun4.l.google.com:5349" },
+    ]
+  }
 
 
   return <>
@@ -17,16 +33,25 @@ export default function App() {
       <div>
         <Navigation setPage={setPage} />
       </div>
-
-      {page == 0 && <Home />}
       {page == 1 && <InDev />}
       {page == 3 && <InDev />}
       {page == 4 && <InDev />}
       {page == 5 && <InDev />}
 
       {
+        page == 0 &&
+        <Home
+          servers={servers}
+          peerConnection={peerConnection}
+          localStream={localStream}
+          remoteStream={remoteStream}
+        />
+      }
+
+      {
         page == 2 &&
         <VideoCall
+          servers={servers}
           peerConnection={peerConnection}
           localStream={localStream}
           remoteStream={remoteStream}

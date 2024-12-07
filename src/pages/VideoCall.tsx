@@ -2,27 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import bigLogo from '../../public/bigLogo.png'
 import exa from '../../public/exa.png'
 
-const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
+const VideoCall = ({ servers, peerConnection, localStream, remoteStream }) => {
   const [obj, setObj] = useState(""); // setting the textarea
   const [videoVisible, setVideoVisible] = useState(false);
 
   let offerVdo = useRef(null);
   let answerVdo = useRef(null);
 
-  let servers = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun.l.google.com:5349" },
-      { urls: "stun:stun1.l.google.com:3478" },
-      { urls: "stun:stun1.l.google.com:5349" },
-      { urls: "stun:stun2.l.google.com:19302" },
-      { urls: "stun:stun2.l.google.com:5349" },
-      { urls: "stun:stun3.l.google.com:3478" },
-      { urls: "stun:stun3.l.google.com:5349" },
-      { urls: "stun:stun4.l.google.com:19302" },
-      { urls: "stun:stun4.l.google.com:5349" },
-    ]
-  }
 
   async function createOffer() {
     peerConnection.current = new RTCPeerConnection(servers);
@@ -70,7 +56,7 @@ const VideoCall = ({ peerConnection, localStream, remoteStream }) => {
 
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
     offerVdo.current.srcObject = localStream.current;
     offerVdo.current.onloadedmetadata = () => offerVdo.current.play();
 
