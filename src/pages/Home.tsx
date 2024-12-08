@@ -26,7 +26,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play()
 
@@ -122,7 +122,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
   socket.on('take-the-answer', async (answer) => {
     console.log(answer)
-    if (!peerConnection.current.remoteDescription) {
+    if (!peerConnection.current.currentRemoteDescription) {
       await peerConnection.current.setRemoteDescription(answer);
       setVideoVisible(true);
     }
@@ -212,11 +212,11 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
       className={`${!videoVisible && 'hidden'} relative w-full`}>
 
       <video
-        ref={offerVideoEl}
+        ref={answerVideoEl}
         className=" absolute w-full h-[100vh] z-0 "></video>
 
       <video
-        ref={answerVideoEl}
+        ref={offerVideoEl}
         className='w-[200px] bg-red-900 rounded-xl z-10 border-2 border-blue-700 absolute right-4 bottom-4' ></video>
 
 
