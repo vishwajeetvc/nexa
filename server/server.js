@@ -17,26 +17,26 @@ io.on('connection', (socket) => {
   clients.push(socket);
 
   socket.on('offer', (offer) => {
+    console.log("saved offer to the server");
     socket.offer = offer;
     socket.emit('id', socket.id);
   })
 
   socket.on('give-me-offer', (id) => {
-    // console.log(id);
-    // console.log("Asking for offer");
+    console.log("Asking for offer");
     const targetClient = clients.find(client => client.id.startsWith(id));
     // console.log(targetClient)
     socket.emit('take-the-offer', targetClient.offer);
-    // console.log(targetClient.offer.type)
+    console.log(targetClient.offer.type)
 
   })
 
   socket.on('answer', (answer, id) => {
-    // console.log("Got the answer from the client")
+    console.log("Got the answer from the client")
     const targetClient = clients.find(client => client.id.startsWith(id));
     targetClient.emit('take-the-answer', answer);
-    // console.log("Answer sent from the server")
-    // console.log(targetClient.id, answer.type)
+    console.log("Answer sent from the server")
+    console.log(targetClient.id, answer.type)
   })
 
 });
