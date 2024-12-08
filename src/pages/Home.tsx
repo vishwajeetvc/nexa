@@ -71,6 +71,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
   }
 
   async function createAnswer() {
+    setVideoVisible(true);
     peerConnection.current = new RTCPeerConnection(servers);
 
     localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -122,6 +123,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     console.log(answer)
     if (!peerConnection.current.remoteDescription) {
       await peerConnection.current.setRemoteDescription(answer);
+      setVideoVisible(true);
     }
   })
 
