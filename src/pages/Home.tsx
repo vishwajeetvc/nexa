@@ -54,7 +54,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     let i = 0;// count the no of icecandidates
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (i++) return;
+        if (++i == 3) return;
         console.log("Icecandidate recieved")
         socket.emit('offer', peerConnection.current.localDescription)
         console.log("emitted offer to the server");
@@ -94,6 +94,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current.onconnectionstatechange = () => {
       if (peerConnection.current.iceConnectionState == 'connected') {
+        console.log("video visible")
         setVideoVisible(true);
       }
     }
@@ -101,7 +102,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     let i = 0;
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (i++) return;
+        if (++i == 3) return;
         socket.emit('answer', peerConnection.current.localDescription, id.current.value);
         console.log("Anwer is emitted from the client");
       }
