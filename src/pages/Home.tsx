@@ -24,7 +24,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play()
 
