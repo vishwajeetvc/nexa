@@ -9,7 +9,8 @@ export default function App() {
   const peerConnection = useRef(null);
   const localStream = useRef(null);
   const remoteStream = useRef(null);
-  const serverIp = "192.168.29.34";
+
+  const serverIp = "[2401:4900:73f6:cc8b:c1dc:be6a:eca0:4bc8]";
   const PORT = 3000;
 
   const servers = {
@@ -39,27 +40,8 @@ export default function App() {
       {page == 4 && <InDev />}
       {page == 5 && <InDev />}
 
-      {
-        page == 0 &&
-        <Home
-          PORT={PORT}
-          serverIp={serverIp}
-          servers={servers}
-          peerConnection={peerConnection}
-          localStream={localStream}
-          remoteStream={remoteStream}
-        />
-      }
-
-      {
-        page == 2 &&
-        <VideoCall
-          servers={servers}
-          peerConnection={peerConnection}
-          localStream={localStream}
-          remoteStream={remoteStream}
-        />
-      }
+      {page == 0 && <Home {...{ PORT, serverIp, servers, peerConnection, localStream, remoteStream }} />}
+      {page == 2 && <VideoCall {...{ servers, peerConnection, localStream, remoteStream }} />}
     </div>
   </>
 }
@@ -67,6 +49,6 @@ export default function App() {
 
 function InDev() {
   return <div className="flex justify-center items-center w-full">
-    <h1 className="text-white font-bold text-4xl">😜Comming Soon!!</h1>
+    <h1 className="text-white font-bold text-4xl">Comming Soon!!</h1>
   </div>
 }

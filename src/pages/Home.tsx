@@ -52,7 +52,6 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
         if (i++) return;
-        // peerConnection.current.localDescription,
         socket.emit('offer', peerConnection.current.localDescription)
         socket.on('id', idd => {
           id.current.value = idd.slice(0, 6);
@@ -96,7 +95,6 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
         if (i++) return;
-        // peerConnection.current.localDescription,
         socket.emit('answer', peerConnection.current.localDescription, id.current.value);
         console.log("Anwer is emitted from the client");
       }
@@ -119,13 +117,6 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
       await peerConnection.current.setRemoteDescription(answer);
     }
   })
-  // async function addAnswer() {
-  //
-  //   let answer = JSON.parse(prompt("Enter the answer"));
-  //   if (!peerConnection.current.remoteDescription) {
-  //     await peerConnection.current.setRemoteDescription(answer);
-  //   }
-  // }
 
   useEffect(() => {
     if (peerConnection.current?.localDescription.type == "offer") {
@@ -189,8 +180,8 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
           <p className='text-3xl font-bold text-white p-5'>Screen Share</p>
         </div>
-        <input className="absolute text-center no-underline right-[130px] top-[47%] rounded-xl text-white 
-          border w-[150px] bg-[#1D2137] p-2 " type="text" ref={id} />
+        <input placeholder="Enter the code" className="absolute text-center no-underline right-[130px] top-[47%] rounded-xl text-white 
+          border border-gray-600 outline-none w-[150px] bg-[#1D2137] z-20 p-2 " type="text" ref={id} />
         <div className=' relative h-[50%] flex flex-col items-center justify-center'>
           <img
             onClick={createAnswer}

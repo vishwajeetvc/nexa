@@ -22,21 +22,21 @@ io.on('connection', (socket) => {
   })
 
   socket.on('give-me-offer', (id) => {
-    console.log(id);
-    console.log("Asking for offer");
+    // console.log(id);
+    // console.log("Asking for offer");
     const targetClient = clients.find(client => client.id.startsWith(id));
-    console.log(targetClient)
+    // console.log(targetClient)
     socket.emit('take-the-offer', targetClient.offer);
-    console.log(targetClient.offer.type)
+    // console.log(targetClient.offer.type)
 
   })
 
   socket.on('answer', (answer, id) => {
-    console.log("Got the answer from the client")
+    // console.log("Got the answer from the client")
     const targetClient = clients.find(client => client.id.startsWith(id));
     targetClient.emit('take-the-answer', answer);
-    console.log("Answer sent from the server")
-    console.log(targetClient.id, answer.type)
+    // console.log("Answer sent from the server")
+    // console.log(targetClient.id, answer.type)
   })
 
 });
