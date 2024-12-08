@@ -4,13 +4,21 @@ import thePara from '../../public/thePara.png'
 import up from '../../public/up.png'
 import down from '../../public/down.png'
 import { useEffect, useRef, useState } from 'react'
+import { io } from 'socket.io-client'
 
-export default function Home({ peerConnection, localStream, remoteStream, servers }) {
+export default function Home({ serverIp, PORT, peerConnection, localStream, remoteStream, servers }) {
 
   const [videoVisible, setVideoVisible] = useState(false);
   const offerVideoEl = useRef(null);
   const answerVideoEl = useRef(null);
+  const id = useRef(null)
 
+  const socket = io(`${serverIp}:${PORT}`);
+
+  socket.on('connect', () => {
+    console.log("Socket is connected");
+
+  })
 
   async function createOffer() {
 
@@ -40,9 +48,15 @@ export default function Home({ peerConnection, localStream, remoteStream, server
       }
     }
 
+    let i = 0;// count the no of icecandidates
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        console.log(JSON.stringify(peerConnection.current.localDescription));
+        if (i++) return;
+        // peerConnection.current.localDescription,
+        socket.emit('offer', peerConnection.current.localDescription)
+        socket.on('id', idd => {
+          id.current.value = idd.slice(0, 6);
+        });
       }
     }
 
@@ -54,7 +68,7 @@ export default function Home({ peerConnection, localStream, remoteStream, server
   async function createAnswer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play();
 
@@ -67,7 +81,7 @@ export default function Home({ peerConnection, localStream, remoteStream, server
     })
 
     peerConnection.current.ontrack = (event: any) => {
-      event.strams[0].getTracks().forEach((track: any) => {
+      event.streams[0].getTracks().forEach((track: any) => {
         remoteStream.current.addTrack(track);
       })
     }
@@ -78,27 +92,40 @@ export default function Home({ peerConnection, localStream, remoteStream, server
       }
     }
 
+    let i = 0;
     peerConnection.current.onicecandidate = (e: any) => {
-      if (e.icecandidate) {
-        console.log(peerConnection.current.localDescription);
+      if (e.candidate) {
+        if (i++) return;
+        // peerConnection.current.localDescription,
+        socket.emit('answer', peerConnection.current.localDescription, id.current.value);
+        console.log("Anwer is emitted from the client");
       }
     }
 
-    const offer = JSON.parse(prompt("Enter the offer"));
-
-    await peerConnection.current.setRemoteDescription(offer);
-
-    const answer = await peerConnection.current.createAnswer();
-    await peerConnection.current.setLocalDescription(answer);
+    socket.emit('give-me-offer', id.current.value)
+    socket.on('take-the-offer', async (offer) => {
+      console.log("taking the offer")
+      console.log(offer);
+      await peerConnection.current.setRemoteDescription(offer);
+      const answer = await peerConnection.current.createAnswer();
+      await peerConnection.current.setLocalDescription(answer);
+    })
 
   }
 
-  async function addAnswer() {
-    let answer = JSON.parse(prompt("Enter the answer"));
+  socket.on('take-the-answer', async (answer) => {
+    console.log(answer)
     if (!peerConnection.current.remoteDescription) {
       await peerConnection.current.setRemoteDescription(answer);
     }
-  }
+  })
+  // async function addAnswer() {
+  //
+  //   let answer = JSON.parse(prompt("Enter the answer"));
+  //   if (!peerConnection.current.remoteDescription) {
+  //     await peerConnection.current.setRemoteDescription(answer);
+  //   }
+  // }
 
   useEffect(() => {
     if (peerConnection.current?.localDescription.type == "offer") {
@@ -116,9 +143,9 @@ export default function Home({ peerConnection, localStream, remoteStream, server
     }
   }, [])
 
-
   return (<>
     <div className={`--Cont flex w-full ${videoVisible && 'hidden'} `}>
+
 
       <div className='--Left  w-[60%]'
         style={{
@@ -146,6 +173,7 @@ export default function Home({ peerConnection, localStream, remoteStream, server
             <p className='font-bold text-[rgba(2,255,255,0.7)]'>Ankit, Javed, Kanhaiya, Prince, Vishwajeet.</p>
           </div>
 
+
         </div>
       </div>
 
@@ -161,8 +189,9 @@ export default function Home({ peerConnection, localStream, remoteStream, server
 
           <p className='text-3xl font-bold text-white p-5'>Screen Share</p>
         </div>
+        <input className="absolute text-center no-underline right-[130px] top-[47%] rounded-xl text-white 
+          border w-[150px] bg-[#1D2137] p-2 " type="text" ref={id} />
         <div className=' relative h-[50%] flex flex-col items-center justify-center'>
-
           <img
             onClick={createAnswer}
             src={down}

@@ -9,7 +9,8 @@ export default function App() {
   const peerConnection = useRef(null);
   const localStream = useRef(null);
   const remoteStream = useRef(null);
-  const serverIp = useRef(null);
+  const serverIp = "192.168.29.34";
+  const PORT = 3000;
 
   const servers = {
     iceServers: [
@@ -41,6 +42,8 @@ export default function App() {
       {
         page == 0 &&
         <Home
+          PORT={PORT}
+          serverIp={serverIp}
           servers={servers}
           peerConnection={peerConnection}
           localStream={localStream}
