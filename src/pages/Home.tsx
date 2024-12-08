@@ -22,6 +22,8 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
   async function createOffer() {
 
+    console.log('creating the offer');
+
     peerConnection.current = new RTCPeerConnection(servers);
 
     localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
@@ -44,6 +46,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current.onconnectionstatechange = () => {
       if (peerConnection.current.iceConnectionState == 'connected') {
+        console.log("video visible")
         setVideoVisible(true);
       }
     }
@@ -52,8 +55,11 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
         if (i++) return;
+        console.log("Icecandidate recieved")
         socket.emit('offer', peerConnection.current.localDescription)
+        console.log("emitted offer to the server");
         socket.on('id', idd => {
+          console.log("getting the idd");
           id.current.value = idd.slice(0, 6);
         });
       }
@@ -101,6 +107,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     }
 
     socket.emit('give-me-offer', id.current.value)
+    console.log("askinf the offer from the server")
     socket.on('take-the-offer', async (offer) => {
       console.log("taking the offer")
       console.log(offer);
