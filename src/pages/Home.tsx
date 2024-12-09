@@ -54,14 +54,15 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     let i = 0;// count the no of icecandidates
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (++i == 3) return;
-        console.log("Icecandidate recieved")
-        socket.emit('offer', peerConnection.current.localDescription)
-        console.log("emitted offer to the server");
-        socket.on('id', idd => {
-          console.log("getting the idd");
-          id.current.value = idd.slice(0, 6);
-        });
+        if (++i == 3) {
+          console.log("Icecandidate recieved")
+          socket.emit('offer', peerConnection.current.localDescription)
+          console.log("emitted offer to the server");
+          socket.on('id', idd => {
+            console.log("getting the idd");
+            id.current.value = idd.slice(0, 6);
+          });
+        }
       }
     }
 
@@ -73,7 +74,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
   async function createAnswer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play();
 
