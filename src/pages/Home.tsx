@@ -45,8 +45,9 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     }
 
     peerConnection.current.onconnectionstatechange = () => {
+      console.log("Connection state chages")
       if (peerConnection.current.iceConnectionState == 'connected') {
-        console.log("video visible")
+        console.log("Ice connection state connected")
         setVideoVisible(true);
       }
     }
@@ -60,7 +61,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
           console.log("emitted offer to the server");
           socket.on('id', idd => {
             console.log("getting the idd");
-            id.current.value = idd.slice(0, 6);
+            id.current.value = idd.slice(0, 6); // the input field
           });
         }
       }
@@ -102,9 +103,10 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     let i = 0;
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (++i == 3) return;
-        socket.emit('answer', peerConnection.current.localDescription, id.current.value);
-        console.log("Anwer is emitted from the client");
+        if (++i == 3) {
+          socket.emit('answer', peerConnection.current.localDescription, id.current.value);
+          console.log("Anwer is emitted from the client");
+        }
       }
     }
 
@@ -122,6 +124,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
   socket.on('take-the-answer', async (answer) => {
     console.log("take-the-answer emitted")
+    console.log(answer);
     if (!peerConnection.current.remoteDescription) {
       console.log("setting the remote DEscription")
       await peerConnection.current.setRemoteDescription(answer);
