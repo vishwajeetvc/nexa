@@ -14,18 +14,19 @@ const clients = [];
 
 io.on('connection', (socket) => {
 
+  console.log(clients.length);
   clients.push(socket);
 
   socket.on('offer', (offer) => {
-    console.log("saved offer to the server");
     socket.offer = offer;
     socket.emit('id', socket.id);
   })
 
   socket.on('give-me-offer', (id) => {
+    // console.log(id);
     console.log("Asking for offer");
     const targetClient = clients.find(client => client.id.startsWith(id));
-    // console.log(targetClient)
+    console.log(targetClient)
     socket.emit('take-the-offer', targetClient.offer);
     console.log(targetClient.offer.type)
 
