@@ -32,10 +32,6 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
           dataChannel.send(JSON.stringify({ x: e.clientX, y: e.clientY }))
         })
     }
-    document.querySelector(offerVideoEl.current)
-      .addEventListener('mouseover', (e: any) => {
-        dataChannel.send(JSON.stringify({ x: e.clientX, y: e.clientY }))
-      })
 
     localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
     offerVideoEl.current.srcObject = localStream.current;
