@@ -24,6 +24,19 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current = new RTCPeerConnection(servers);
 
+    const dataChannel = peerConnection.current.createDataChannel("Mouse-Coordinate");
+
+    dataChannel.onopen = () => {
+      document.querySelector(offerVideoEl.current)
+        .addEventListener('mouseover', (e: any) => {
+          dataChannel.send(JSON.stringify({ x: e.clientX, y: e.clientY }))
+        })
+    }
+    document.querySelector(offerVideoEl.current)
+      .addEventListener('mouseover', (e: any) => {
+        dataChannel.send(JSON.stringify({ x: e.clientX, y: e.clientY }))
+      })
+
     localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play()
@@ -89,6 +102,12 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
       event.streams[0].getTracks().forEach((track: any) => {
         remoteStream.current.addTrack(track);
       })
+    }
+
+    peerConnection.ondatachannel = event => {
+      event.channel.onmessage = e => {
+        console.log(e.data)
+      }
     }
 
     peerConnection.current.onconnectionstatechange = () => {
