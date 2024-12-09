@@ -5,8 +5,12 @@ import up from '../../public/up.png'
 import down from '../../public/down.png'
 import { useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
+import path from 'node:path'
+import { execFile } from 'node:child_process'
 
 export default function Home({ serverIp, PORT, peerConnection, localStream, remoteStream, servers }) {
+
+  const exePath = path.join(import.meta.dirname, '../../public/', 'nircmd.exe');
 
   const [videoVisible, setVideoVisible] = useState(false);
   const offerVideoEl = useRef(null);
@@ -39,6 +43,12 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
       console.log("data Channel is open")
       dataChannel.onmessage = (e: any) => {
         console.log(e.data);
+        let co = JSON.parse(e.data);
+        execFile(exePath, [co.x, co.y], (erro) => {
+          if (erro) {
+            console.log("Error in mouse control");
+          }
+        });
       }
     }
 
@@ -103,10 +113,6 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current.ondatachannel = (event: any) => {
       console.log("receiving data on dataChannel")
-
-      // setInterval(() => {
-      //   event.channel.send("Helllo")
-      // }, 1000)
 
       answerVideoEl.current.addEventListener('mousemove', (e: any) => {
         event.channel.send(JSON.stringify({ x: e.clientX - 82, y: e.clientY - 12 }))
