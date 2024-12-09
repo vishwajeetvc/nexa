@@ -12,6 +12,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
   const offerVideoEl = useRef(null);
   const answerVideoEl = useRef(null);
   const id = useRef(null)
+  let dataChannel: any;
 
   const socket = io(`${serverIp}:${PORT}`);
 
@@ -23,23 +24,23 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
   async function createOffer() {
 
     peerConnection.current = new RTCPeerConnection(servers);
+    dataChannel = peerConnection.current.createDataChannel("Mouse-Coordinate");
 
-    const dataChannel = peerConnection.current.createDataChannel("Mouse-Coordinate");
 
-    dataChannel.onopen = () => {
-      document.querySelector(offerVideoEl.current)
-        .addEventListener('mouseover', (e: any) => {
-          dataChannel.send(JSON.stringify({ x: e.clientX, y: e.clientY }))
-        })
-    }
-
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play()
 
     remoteStream.current = new MediaStream();
     answerVideoEl.current.srcObject = remoteStream.current;
     answerVideoEl.current.onloadedmetadata = () => answerVideoEl.current.play()
+
+    dataChannel.onopen = () => {
+      console.log("data Channel is open")
+      dataChannel.onmessage = (e: any) => {
+        console.log(e.data);
+      }
+    }
 
     localStream.current.getTracks().forEach((track: any) => {
       peerConnection.current.addTrack(track, localStream.current)
@@ -82,7 +83,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
   async function createAnswer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play();
 
@@ -100,10 +101,17 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
       })
     }
 
-    peerConnection.ondatachannel = event => {
-      event.channel.onmessage = e => {
-        console.log(e.data)
-      }
+    peerConnection.current.ondatachannel = (event: any) => {
+      console.log("receiving data on dataChannel")
+
+      // setInterval(() => {
+      //   event.channel.send("Helllo")
+      // }, 1000)
+
+      answerVideoEl.current.addEventListener('mousemove', (e: any) => {
+        event.channel.send(JSON.stringify({ x: e.clientX - 82, y: e.clientY - 12 }))
+      })
+
     }
 
     peerConnection.current.onconnectionstatechange = () => {
@@ -116,7 +124,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     let i = 0;
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (++i == 3) {
+        if (++i == 1) {
           socket.emit('answer', peerConnection.current.localDescription, id.current.value);
           console.log("Anwer is emitted from the client");
         }
@@ -141,6 +149,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     if (!peerConnection.current.remoteDescription) {
       console.log("setting the remote DEscription")
       await peerConnection.current.setRemoteDescription(answer);
+      setVideoVisible(true);
     }
   })
 
