@@ -10,7 +10,8 @@ import { execFile } from 'node:child_process'
 
 export default function Home({ serverIp, PORT, peerConnection, localStream, remoteStream, servers }) {
 
-  // const exePath = path.join(import.meta.dirname, '../../public/', 'nircmd.exe');
+  const exePath = path.join(__dirname, '../../../../../../public/', 'nircmd.exe');
+  console.log(path.join(__dirname, '../../../../../../public/', 'nircmd.exe'))
 
   const [videoVisible, setVideoVisible] = useState(false);
   const offerVideoEl = useRef(null);
@@ -40,16 +41,22 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     answerVideoEl.current.onloadedmetadata = () => answerVideoEl.current.play()
 
     dataChannel.onopen = () => {
+
       console.log("data Channel is open")
+
       dataChannel.onmessage = (e: any) => {
+
         console.log(e.data);
+
         let co = JSON.parse(e.data);
+
         console.log(co);
-        // execFile(exePath, [co.x, co.y], (erro) => {
-        //   if (erro) {
-        //     console.log("Error in mouse control");
-        //   }
-        // });
+
+        execFile(exePath, ['setcursor', co.x, co.y], (erro: any) => {
+          if (erro) {
+            console.log("Error in mouse control");
+          }
+        });
       }
     }
 

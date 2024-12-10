@@ -10,7 +10,7 @@ export default function App() {
   const localStream = useRef(null);
   const remoteStream = useRef(null);
 
-  const serverIp = "[2401:4900:7425:23c9:585c:d1b4:fb7c:d71b]";
+  const serverIp = "[2401:4900:742e:6bb0:71cf:784a:2d1f:203e]";
   const PORT = 3000;
 
   const servers = {
