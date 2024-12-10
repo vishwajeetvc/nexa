@@ -138,7 +138,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
     let i = 0;
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (++i == 1) {
+        if (++i == 3) {
           socket.emit('answer', peerConnection.current.localDescription, id.current.value);
           console.log("Anwer is emitted from the client");
         }
