@@ -11,7 +11,7 @@ import { execFile } from 'node:child_process'
 export default function Home({ serverIp, PORT, peerConnection, localStream, remoteStream, servers }) {
 
   const exePath = path.join(__dirname, '../../../../../../public/', 'nircmd.exe');
-  console.log(path.join(__dirname, '../../../../../../public/', 'nircmd.exe'))
+  // console.log(path.join(__dirname, '../../../../../../public/', 'nircmd.exe'))
 
   const [videoVisible, setVideoVisible] = useState(false);
   const offerVideoEl = useRef(null);
@@ -30,7 +30,6 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
     peerConnection.current = new RTCPeerConnection(servers);
     dataChannel = peerConnection.current.createDataChannel("Mouse-Coordinate");
-
 
     localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
@@ -52,7 +51,7 @@ export default function Home({ serverIp, PORT, peerConnection, localStream, remo
 
         console.log(co);
 
-        execFile(exePath, ['setcursor', co.x, co.y], (erro: any) => {
+        execFile(exePath, ['setcursor', (100 * co.x) / 1366, ((100 * co.y) / 768)], (erro: any) => {
           if (erro) {
             console.log("Error in mouse control");
           }
