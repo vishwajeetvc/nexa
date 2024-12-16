@@ -96,7 +96,7 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
     let i = 0;// count the no of icecandidates
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (++i == 1) {
+        if (++i == 3) {
           console.log("Icecandidate recieved")
           socket.emit('offer', peerConnection.current.localDescription)
           console.log("emitted offer to the server");
@@ -162,7 +162,7 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
     let i = 0;
     peerConnection.current.onicecandidate = (e: any) => {
       if (e.candidate) {
-        if (++i == 1) {
+        if (++i == 3) {
           socket.emit('answer', peerConnection.current.localDescription, id.current.value);
           console.log("Anwer is emitted from the client");
         }
