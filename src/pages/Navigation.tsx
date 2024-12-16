@@ -12,11 +12,11 @@ function Icon({ icon, moreCss, onClick }: any) {
 
   </>
 }
-export default function Navigation({ setPage }) {
+export default function Navigation({ setPage, online }) {
   return <>
     <div
       style={{
-        borderRight: "2px solid #FF2559",
+        borderRight: `5px solid ${online ? "#00FF1E" : '#FF2559'}`,
         WebkitAppRegion: 'drag',
       }}
       className="w-[80px] bg-[#0B192C] ">

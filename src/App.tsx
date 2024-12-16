@@ -2,16 +2,21 @@ import { useState, useRef } from "react"
 import Home from "./pages/Home"
 import Navigation from "./pages/Navigation"
 import VideoCall from "./pages/VideoCall"
-export default function App() {
+import ServerSetting from "./pages/ServerSetting"
+
+export default function App({ setServerIp, PORT, socket }) {
 
   const [page, setPage] = useState(0);
 
   const peerConnection = useRef(null);
   const localStream = useRef(null);
   const remoteStream = useRef(null);
+  const [online, setOnline] = useState(false);
 
-  const serverIp = "[2401:4900:7423:7752:b5fa:8a55:25de:b6fb]";
-  const PORT = 3000;
+  socket.on('connect', () => {
+    if (online) return;
+    setOnline(true);
+  })
 
   const servers = {
     iceServers: [
@@ -28,19 +33,18 @@ export default function App() {
     ]
   }
 
-
   return <>
     <div className="flex w-full bg-[#1D2137]">
 
       <div>
-        <Navigation setPage={setPage} />
+        <Navigation setPage={setPage} online={online} />
       </div>
-      {page == 1 && <InDev />}
+      {page == 1 && <ServerSetting setServerIp={setServerIp} />}
       {page == 3 && <InDev />}
       {page == 4 && <InDev />}
       {page == 5 && <InDev />}
 
-      {page == 0 && <Home {...{ PORT, serverIp, servers, peerConnection, localStream, remoteStream }} />}
+      {page == 0 && <Home {...{ socket, PORT, servers, peerConnection, localStream, remoteStream, setOnline, online }} />}
       {page == 2 && <VideoCall {...{ servers, peerConnection, localStream, remoteStream }} />}
     </div>
   </>
