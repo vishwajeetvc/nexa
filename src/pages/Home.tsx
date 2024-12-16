@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import path from 'node:path'
 import { execFile } from 'node:child_process'
 
-export default function Home({ socket, peerConnection, localStream, remoteStream, servers, setOnline, online }) {
+export default function Home({ socket, peerConnection, localStream, remoteStream, servers, online }) {
 
   const exePath = path.join(__dirname, '../../../../../../public/', 'nircmd.exe');
   // console.log(path.join(__dirname, '../../../../../../public/', 'nircmd.exe'))
@@ -247,7 +247,11 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
         <div className='pt-9 h-[50%] flex flex-col items-center justify-center'>
 
           <img
-            onClick={createOffer}
+            onClick={() => {
+              if (online) {
+                createOffer();
+              }
+            }}
             src={up}
             className='cursor-pointer' />
 
@@ -257,7 +261,11 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
           border border-gray-600 outline-none w-[150px] bg-[#1D2137] z-20 p-2 " type="text" ref={id} />
         <div className=' relative h-[50%] flex flex-col items-center justify-center'>
           <img
-            onClick={createAnswer}
+            onClick={() => {
+              if (online) {
+                createAnswer();
+              }
+            }}
             src={down}
             className='cursor-pointer' />
 
@@ -282,6 +290,17 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
         ref={offerVideoEl}
         className='w-[200px] bg-red-900 rounded-xl z-10 border-2 border-blue-700 absolute right-4 bottom-4' ></video>
 
+      <div
+        className='z-100'
+        onClick={() => {
+          peerConnection.current.close();
+          localStream.current.getTracks().forEach(track => {
+            track.stop();
+          })
+          remoteStream.current.getTracks().forEach(track => {
+            track.stop();
+          })
+        }}>Stop</div>
 
     </div>
   </>)
