@@ -1,4 +1,4 @@
-import { ipcMain, app, BrowserWindow, session, desktopCapturer, Menu } from 'electron'
+import { ipcMain, app, BrowserWindow, session, desktopCapturer, screen } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
@@ -13,7 +13,6 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
-// let splashWindow: BrowserWindow | null
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -28,25 +27,12 @@ app.on('activate', () => {
   }
 })
 
-// app.whenReady().then(() => {
-//   createWindow();
-// })
-
 app.on('ready', () => {
   createWindow();
 })
 
 
 function createWindow() {
-  // splashWindow = new BrowserWindow({
-  //   width: 400,
-  //   height: 300,
-  //   frame: false,
-  //   transparent: true,
-  //   alwaysOnTop: true,
-  // });
-  //
-  // splashWindow.loadFile('splash.html');
   win = new BrowserWindow({
     width: 1200,
     height: 650,
@@ -64,7 +50,6 @@ function createWindow() {
     })
   })
 
-  // Menu.setApplicationMenu(null);
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
@@ -75,5 +60,4 @@ function createWindow() {
     if (win)
       win.close();
   })
-
 }
