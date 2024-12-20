@@ -16,7 +16,7 @@ export default function Navigation({ setPage, online }) {
   return <>
     <div
       style={{
-        borderRight: `5px solid ${online ? "#00FF1E" : '#FF2559'}`,
+        borderRight: `2px solid ${online ? "black" : '#FF2559'}`,
         WebkitAppRegion: 'drag',
       }}
       className="w-[80px] bg-[#0B192C] ">

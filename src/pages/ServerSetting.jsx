@@ -18,7 +18,7 @@ export default function ServerSetting({ setServerIp }) {
       className="w-full h-100vh relative">
 
       <div className="absolute bottom-[50px] w-[100%] text-white ">
-        <h1 className='text-6xl font-bold p-8'>NexaServer</h1>
+        <h1 className='text-6xl font-bold p-8'><span className='text-red-500'>N</span><span className='text-blue-400'>exa</span>Server</h1>
         <div className='flex text-2xl items-center text-center p-4 gap-4'>
           <p className='text-3xl font-bold text-white p-5'>Server IP</p>
           <div>
