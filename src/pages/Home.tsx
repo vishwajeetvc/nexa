@@ -25,7 +25,7 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
     peerConnection.current = new RTCPeerConnection(servers);
     dataChannel = peerConnection.current.createDataChannel("Mouse-Coordinate");
 
-    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+    localStream.current = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: { max: 20 } }, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play()
 
@@ -43,7 +43,9 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
         switch (co.type) {
 
           case 'mousemove':
-            execFile(exePath, ['setcursor', (co.x / 1295) * 1366, (co.y / 595) * 768], (erro: any) => {
+            let x = (100*co.x)/768;
+            let y = (100*co.y)/1366;
+            execFile(exePath, ['setcursor', (x / 1295) * 1366, (y / 595) * 768], (erro: any) => {
               if (erro) {
                 console.log("Error in mouse control");
               }
@@ -116,7 +118,7 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
   async function createAnswer() {
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: { frameRate: { max: 30 } }, audio: false });
     offerVideoEl.current.srcObject = localStream.current;
     offerVideoEl.current.onloadedmetadata = () => offerVideoEl.current.play();
 
@@ -291,7 +293,7 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
         className='w-[200px] bg-red-900 rounded-xl z-10 border-2 border-blue-700 absolute right-4 bottom-4' ></video>
 
       <div
-        className='z-100'
+        className='z-100 absolute cursor-pointer'
         onClick={() => {
           peerConnection.current.close();
           localStream.current.getTracks().forEach(track => {
