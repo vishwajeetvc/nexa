@@ -7,6 +7,12 @@ import { useEffect, useRef, useState } from 'react'
 import path from 'node:path'
 import { execFile } from 'node:child_process'
 
+
+function diff(a , b){
+  return a > b ? a-b : b-a;
+}
+
+
 export default function Home({ socket, peerConnection, localStream, remoteStream, servers, online }) {
 
   const exePath = path.join(__dirname, '../../../../../../public/', 'nircmd.exe');
@@ -146,8 +152,14 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
     peerConnection.current.ondatachannel = (event: any) => {
       console.log("receiving data on dataChannel")
 
+      let x = 0;
+      let y = 0;
       answerVideoEl.current.addEventListener('mousemove', (e: any) => {
-        event.channel.send(JSON.stringify({ x: e.clientX - 80, y: e.clientY - 12, type: 'mousemove' }))
+        if(diff(x, e.clientX) > 5 && diff(y, e.clientY) > 5){
+          event.channel.send(JSON.stringify({ x: e.clientX - 80, y: e.clientY - 12, type: 'mousemove' }))
+          x = e.clientX;
+          y = e.clientY;
+        }
       })
       answerVideoEl.current.addEventListener('click', (e: any) => {
         event.channel.send(JSON.stringify({ x: e.clientX - 80, y: e.clientY - 12, type: 'click' }))
@@ -293,7 +305,7 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
 
       <video
         ref={answerVideoEl}
-        className=" absolute w-full h-[100vh] z-0 "></video>
+        className=" absolute w-full h-[100vh] z-0 cursor-none "></video>
 
       <video
         ref={offerVideoEl}
