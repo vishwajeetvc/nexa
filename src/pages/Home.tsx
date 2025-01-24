@@ -43,9 +43,16 @@ export default function Home({ socket, peerConnection, localStream, remoteStream
         switch (co.type) {
 
           case 'mousemove':
-            let x = (100*co.x)/768;
-            let y = (100*co.y)/1366;
-            execFile(exePath, ['setcursor', (x / 1295) * 1366, (y / 595) * 768], (erro: any) => {
+            
+            let x = co.x;
+            let y = co.y;
+            let xPercent  = Math.trunc((x * 100)/1015)
+            let yPercent  = Math.trunc((y * 100)/580)
+
+            const mysideX = Math.trunc((1366 * xPercent)/100);
+            const mysideY = Math.trunc((768 * yPercent)/100);
+
+            execFile(exePath, ['setcursor',mysideX ,mysideY], (erro: any) => {
               if (erro) {
                 console.log("Error in mouse control");
               }
